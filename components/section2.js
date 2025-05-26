@@ -1,24 +1,18 @@
+// D:\Jobs\nextjs_blog_app\components\section2.js
 import Link from "next/link";
 import Image from "next/image";
 import Author from "./_child/author";
-import fetcher from "../lib/fetcher";
 import Spinner from "./_child/spinner";
-import Error from "./_child/error";
 
-export default function section2() {
-  const { data, isLoading, isError } = fetcher("api/posts");
-
-  if (isLoading) return <Spinner></Spinner>;
-  if (isError) return <Error></Error>;
+export default function Section2({ posts }) {
+  if (!posts || posts.length === 0) return <Spinner />;
 
   return (
     <section className="container mx-auto md:px-20 py-10">
       <h1 className="font-bold text-4xl py-12 text-center">Latest Posts</h1>
-
-      {/* grid columns */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-14">
-        {data?.map((value, index) => (
-          <Post data={value} key={index}></Post>
+        {posts.map((value, index) => (
+          <Post data={value} key={index} />
         ))}
       </div>
     </section>
@@ -37,6 +31,7 @@ function Post({ data }) {
               className="rounded"
               width={500}
               height={350}
+              alt={title || "Post Image"}
             />
           </a>
         </Link>
@@ -67,7 +62,7 @@ function Post({ data }) {
           text by the name of Lorem Ipsum decided to leave for the far World of
           Grammar.
         </p>
-        {author ? <Author {...author}></Author> : <></>}
+        {author ? <Author {...author} /> : <></>}
       </div>
     </div>
   );

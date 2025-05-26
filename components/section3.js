@@ -1,22 +1,17 @@
+// D:\Jobs\nextjs_blog_app\components\section3.js
 import { Swiper, SwiperSlide } from "swiper/react";
 import Link from "next/link";
 import Image from "next/image";
 import Author from "./_child/author";
-import fetcher from "../lib/fetcher";
 import Spinner from "./_child/spinner";
-import Error from "./_child/error";
+import "swiper/css";
 
-export default function section3() {
-  const { data, isLoading, isError } = fetcher("api/popular");
-
-  if (isLoading) return <Spinner></Spinner>;
-  if (isError) return <Error></Error>;
+export default function Section3({ popular }) {
+  if (!popular || popular.length === 0) return <Spinner />;
 
   return (
     <section className="container mx-auto md:px-20 py-16">
       <h1 className="font-bold text-4xl py-12 text-center">Most Popular</h1>
-
-      {/* swiper */}
       <Swiper
         breakpoints={{
           640: {
@@ -25,9 +20,9 @@ export default function section3() {
           },
         }}
       >
-        {data?.map((value, index) => (
+        {popular.map((value, index) => (
           <SwiperSlide key={index}>
-            <Post data={value}></Post>
+            <Post data={value} />
           </SwiperSlide>
         ))}
       </Swiper>
@@ -43,7 +38,12 @@ function Post({ data }) {
       <div className="images">
         <Link href={`/posts/${id}`}>
           <a>
-            <Image src={img || ""} width={600} height={400} />
+            <Image
+              src={img || "/"}
+              width={600}
+              height={400}
+              alt={title || "Popular Image"}
+            />
           </a>
         </Link>
       </div>
@@ -68,7 +68,7 @@ function Post({ data }) {
           </Link>
         </div>
         <p className="text-gray-500 py-3">{description || "No Description"}</p>
-        {author ? <Author {...author}></Author> : <></>}
+        {author ? <Author {...author} /> : <></>}
       </div>
     </div>
   );

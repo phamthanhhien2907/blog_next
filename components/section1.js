@@ -1,20 +1,14 @@
+// D:\Jobs\nextjs_blog_app\components\section1.js
 import Image from "next/image";
 import Link from "next/link";
-import Author from "./_child/author";
-// Import Swiper React components
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Autoplay } from "swiper";
-// Import Swiper styles
 import "swiper/css";
-import fetcher from "../lib/fetcher";
+import Author from "./_child/author";
 import Spinner from "./_child/spinner";
-import Error from "./_child/error";
 
-export default function section1() {
-  const { data, isLoading, isError } = fetcher("api/trending");
-
-  if (isLoading) return <Spinner></Spinner>;
-  if (isError) return <Error></Error>;
+export default function Section1({ trending }) {
+  if (!trending || trending.length === 0) return <Spinner />;
 
   SwiperCore.use([Autoplay]);
 
@@ -27,20 +21,12 @@ export default function section1() {
     <section className="py-16" style={bg}>
       <div className="container mx-auto md:px-20">
         <h1 className="font-bold text-4xl pb-12 text-center">Trending</h1>
-
-        <Swiper
-          slidesPerView={1}
-          // loop={true}
-          // autoplay= {{
-          //     delay: 2000
-          // }}
-        >
-          {data?.map((value, index) => (
+        <Swiper slidesPerView={1}>
+          {trending.map((value, index) => (
             <SwiperSlide key={index}>
-              <Slide data={value}></Slide>
+              <Slide data={value} />
             </SwiperSlide>
           ))}
-          ...
         </Swiper>
       </div>
     </section>
@@ -55,7 +41,12 @@ function Slide({ data }) {
       <div className="image">
         <Link href={`/posts/${id}`}>
           <a>
-            <Image src={img || "/"} width={600} height={600} />
+            <Image
+              src={img || "/"}
+              width={600}
+              height={600}
+              alt={title || "Trending Image"}
+            />
           </a>
         </Link>
       </div>
@@ -79,8 +70,8 @@ function Slide({ data }) {
             </a>
           </Link>
         </div>
-        <p className="text-gray-500 py-3">{description || "description"}</p>
-        {author ? <Author {...author}></Author> : <></>}
+        <p className="text-gray-500 py-3">{description || "Description"}</p>
+        {author ? <Author {...author} /> : <></>}
       </div>
     </div>
   );

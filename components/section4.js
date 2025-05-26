@@ -1,16 +1,18 @@
-import Author from "./_child/author";
+// D:\Jobs\nextjs_blog_app\components\section4.js
 import Link from "next/link";
 import Image from "next/image";
-
-import fetcher from "../lib/fetcher";
+import Author from "./_child/author";
 import Spinner from "./_child/spinner";
-import Error from "./_child/error";
 
-export default function section4() {
-  const { data, isLoading, isError } = fetcher("api/popular");
-  console.log(data);
-  if (isLoading) return <Spinner></Spinner>;
-  if (isError) return <Error></Error>;
+export default function Section4({ popular }) {
+  if (!popular || popular.length === 0) return <Spinner />;
+
+  const businessPosts = popular
+    .filter((post) => post.category.includes("Business"))
+    .slice(0, 3);
+  const travelPosts = popular
+    .filter((post) => post.category.includes("Travel"))
+    .slice(0, 3);
 
   return (
     <section className="container mx-auto md:px-20 py-16">
@@ -18,18 +20,17 @@ export default function section4() {
         <div className="item">
           <h1 className="font-bold text-4xl py-12">Business</h1>
           <div className="flex flex-col gap-6">
-            {/* posts */}
-            {data?.[1] ? <Post data={data[1]}></Post> : <></>}
-            {data?.[2] ? <Post data={data[2]}></Post> : <></>}
-            {data?.[3] ? <Post data={data[3]}></Post> : <></>}
+            {businessPosts.map((post, index) => (
+              <Post data={post} key={index} />
+            ))}
           </div>
         </div>
         <div className="item">
           <h1 className="font-bold text-4xl py-12">Travel</h1>
           <div className="flex flex-col gap-6">
-            {data?.[4] ? <Post data={data[4]}></Post> : <></>}
-            {data?.[5] ? <Post data={data[5]}></Post> : <></>}
-            {data?.[2] ? <Post data={data[2]}></Post> : <></>}
+            {travelPosts.map((post, index) => (
+              <Post data={post} key={index} />
+            ))}
           </div>
         </div>
       </div>
@@ -46,10 +47,11 @@ function Post({ data }) {
         <Link href={`/posts/${id}`}>
           <a>
             <Image
-              src={img || ""}
+              src={img || "/"}
               className="rounded"
               width={300}
               height={250}
+              alt={title || "Post Image"}
             />
           </a>
         </Link>
@@ -74,7 +76,7 @@ function Post({ data }) {
             </a>
           </Link>
         </div>
-        {author ? <Author {...author}></Author> : <></>}
+        {author ? <Author {...author} /> : <></>}
       </div>
     </div>
   );
